@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+
+    <!-- <link rel="stylesheet" href="./asset/bootstrap-5.1.0-dist/css/bootstrap.min.css"> -->
+    <link rel="stylesheet" href="./asset/css/style.css">
+</head>
+<body>
+    
+    <div class="main">
+        <div class="board-container">
+            <div class="board-nav">
+                <button class="start-button button">Bắt đầu</button>
+            </div>
+            <div class="board-wrapper">
+                <div class="overlay"></div>
+                <canvas id="board" ></canvas>
+            </div>
+        </div>
+        <div class="game-info">
+            <div class="next-brick" >
+                <fieldset style="display: flex; height: 200px;">
+                    <legend>[  NEXT  ]</legend>
+                    <div style="margin: auto;">
+                        <canvas id="next-brick"></canvas>
+                    </div>
+                </fieldset>
+            </div>
+            <div class="line-container">
+                <fieldset>
+                    <legend>[  LINE  ]</legend>
+                    <span class="counter line-score">0</span>
+                </fieldset>
+            </div>
+            <div class="score-container">
+                <fieldset>
+                    <legend>[  SCORE  ]</legend>
+                    <span class="counter score">0</span>
+                </fieldset>
+            </div>
+        </div>
+    </div>
+
+
+
+    <!-- <script src="./asset/bootstrap-5.1.0-dist/js/bootstrap.min.js"></script> -->
+    <script src="./asset/js/util.js"></script>
+    <script src="./asset/js/config.js"></script>
+    <script src="./asset/js/dot.js"></script>
+    <script src="./asset/js/brick.js"></script>
+    <script src="./asset/js/board.js"></script>
+    <script src="./asset/js/subBoard.js"></script>
+    <script src="./asset/js/app.js"></script>
+</body>
+</html>
