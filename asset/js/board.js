@@ -35,6 +35,7 @@ class Board {
     removeRow(row) {
         this.data.splice(row, 1);
         this.data.unshift([_,_,_,_,_,_,_,_,_,_]);
+        clearAudio.play();
     }
 
     createDot() {

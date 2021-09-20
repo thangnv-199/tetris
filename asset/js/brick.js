@@ -19,8 +19,9 @@ class Brick {
             this.rotateTimes = Math.floor(Math.random() * 4);
             
             this.createData();
-            this.row = this.getPosStart(this.rotateTimes).row;
-            this.col = this.getPosStart(this.rotateTimes).col;
+            this.posStart = this.getPosStart(this.rotateTimes);
+            this.row = this.posStart.row;
+            this.col = this.posStart.col;
             this.rotate(this.rotateTimes);
         }
 
@@ -98,6 +99,7 @@ class Brick {
             this.appendToBoard();
             this.app.board.checkFullRow();
             this.app.createBrick();
+            fallAudio.play();
         }
     }
 

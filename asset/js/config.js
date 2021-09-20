@@ -15,6 +15,10 @@ const lineScore = document.querySelector('.line-score');
 const score = document.querySelector('.score');
 const overlay = document.querySelector('.overlay');
 const gameInfo = document.querySelector('.game-info');
+const fallAudio = document.querySelector('.fall-audio');
+const clearAudio = document.querySelector('.clear-audio');
+const successAudio = document.querySelector('.success-audio');
+const gameoverAudio = document.querySelector('.gameover-audio');
 
 const _ = null;
 const ROW = 24;
@@ -25,7 +29,7 @@ const GAME_WIDTH = DOT_SIZE * COL;
 
 const GAME_FRAME = 40;
 const GAME_BGCOLOR = '#212529';
-const GAME_SPEED_DEFAULT = 500;
+const GAME_SPEED_DEFAULT = tetrisStorage.get('spped') || 500;
 
 const Color = [
     '#0d6efd',

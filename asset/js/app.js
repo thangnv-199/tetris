@@ -2,6 +2,7 @@
 const app = {
 
     init: function() {
+        this.gameSpeed = tetrisStorage.get('speed') || GAME_SPEED_DEFAULT;
         this.totalLineRemove = 0;
         this.currentLineRemove = 0;
         this.score = 0;
@@ -15,6 +16,7 @@ const app = {
     init2: function(line, score, board) {
         const currentBrick = tetrisStorage.get('currentBrick');
         const nextBrick = tetrisStorage.get('nextBrick');
+        this.gameSpeed = tetrisStorage.get('speed') || GAME_SPEED_DEFAULT;
         this.totalLineRemove = line;
         this.currentLineRemove = 0;
         this.score = score;
@@ -29,22 +31,16 @@ const app = {
     },
 
     listenerEvents: function() {
-        boardNav.addEventListener('click', function(e) {
+        boardNav.addEventListener('click', (e) => {
             const _this = e.target;
             const isStartButton = _this.closest('.start-button');
             const isResumeButton = _this.closest('.resume-button');
             
             if (isStartButton) {
-                this.innerHTML = '';
-                score.innerHTML = 0;
-                lineScore.innerHTML = 0;
-                overlay.classList.remove('--active');
-                app.newGame();
+                this.newGame();
             }
             else if (isResumeButton) {
-                this.innerHTML = '';
-                overlay.classList.remove('--active');
-                app.resumeGame();
+                this.resumeGame();
             }
         })
         
@@ -52,22 +48,33 @@ const app = {
             switch(e.key){
                 case 'ArrowLeft':
                 case 'a':
-                    app.brick.moveLeft();
+                    this.brick.moveLeft();
                     break;
                 case 'ArrowRight':
                 case 'd':
-                    app.brick.moveRight();
+                    this.brick.moveRight();
                     break;
                 case 'ArrowDown':
                 case 's':
-                    app.brick.moveDown();
+                    this.brick.moveDown();
                     break;
                 case 'ArrowUp':
                 case 'w':
-                    app.brick.rotate(1);
+                    this.brick.rotate(1);
                     break;
                 case ' ':
-                    app.pauseGame();
+                    const status = tetrisStorage.get('status');
+                    switch(status){
+                        case 'pause':
+                            this.resumeGame()
+                            break;
+                        case 'running':
+                            this.pauseGame()
+                            break;
+                        case 'end':
+                            this.newGame();
+                            break;
+                    }
                     break;
             }
         })
@@ -87,46 +94,45 @@ const app = {
         this.totalLineRemove++;
         lineScore.innerHTML = this.totalLineRemove;
         if (
-            this.totalLineRemove === 500 ||
-            this.totalLineRemove === 501 ||
-            this.totalLineRemove === 502 ||
-            this.totalLineRemove === 503
+            this.totalLineRemove >= 500 &&
+            this.totalLineRemove <= 503
             
         ){
-            this.setGameSpeed(100);
+            this.gameSpeed = 100;
+            this.setGameSpeed(this.gameSpeed);
         }
         else if (
-            this.totalLineRemove === 400 ||
-            this.totalLineRemove === 401 ||
-            this.totalLineRemove === 402 ||
-            this.totalLineRemove === 403
+            this.totalLineRemove >= 400 &&
+            this.totalLineRemove <= 403
             
         ){
-            this.setGameSpeed(150);
+            this.gameSpeed = 150;
+            this.setGameSpeed(this.gameSpeed);
+
         }
         else if (
-            this.totalLineRemove === 300 ||
-            this.totalLineRemove === 301 ||
-            this.totalLineRemove === 302 ||
-            this.totalLineRemove === 303
+            this.totalLineRemove >= 300 &&
+            this.totalLineRemove <= 303
         ){
-            this.setGameSpeed(200);
+            this.gameSpeed = 200;
+            this.setGameSpeed(this.gameSpeed);
+
         }
         else if (
-            this.totalLineRemove === 200 ||
-            this.totalLineRemove === 201 ||
-            this.totalLineRemove === 202 ||
-            this.totalLineRemove === 203
+            this.totalLineRemove >= 200 &&
+            this.totalLineRemove <= 203
         ){
-            this.setGameSpeed(300);
+            this.gameSpeed = 300;
+            this.setGameSpeed(this.gameSpeed);
+
         }
         else if (
-            this.totalLineRemove === 100 ||
-            this.totalLineRemove === 101 ||
-            this.totalLineRemove === 102 ||
-            this.totalLineRemove === 103
+            this.totalLineRemove >= 100 &&
+            this.totalLineRemove <= 103
         ){
-            this.setGameSpeed(400);
+            this.gameSpeed = 400;
+            this.setGameSpeed(this.gameSpeed);
+
         }
 
     },
@@ -138,7 +144,7 @@ const app = {
 
     createBrick() {
         this.brick = this.currentBrick;
-        !this.brick.canFall() && app.endGame();
+        !this.brick.canFall() && this.endGame();
         this.currentLineRemove !== 0 && this.setScore();
         this.currentLineRemove = 0;
         this.subBoard = new SubBoard(this.nextBrick);
@@ -159,22 +165,31 @@ const app = {
     },
 
     newGame: function(){
+        boardNav.innerHTML = '';
+        score.innerHTML = 0;
+        lineScore.innerHTML = 0;
+        overlay.classList.remove('--active');
+        this.gameSpeed = GAME_SPEED_DEFAULT;
         this.board.clear();
-        app.start();
+        this.unsave('running');
+        this.start();
     },
 
     endGame: function(){
         overlay.classList.add('--active');
         boardNav.innerHTML = navComponent(2);
-        app.stop();
+        gameoverAudio.play();
+        this.unsave('end');
+        this.stop();
     },
 
     pauseGame: function(){
         if (tetrisStorage.get('pausegame')) return;
-        tetrisStorage.set('pausegame', true);
+        tetrisStorage.set('status', 'pause');
         tetrisStorage.set('board', this.board.data);
         tetrisStorage.set('line', this.totalLineRemove);
         tetrisStorage.set('score', this.score);
+        tetrisStorage.set('speed', this.gameSpeed);
         tetrisStorage.set('currentBrick', {
             data: this.brick.data,
             row: this.brick.row,
@@ -189,13 +204,19 @@ const app = {
         });
         overlay.classList.add('--active');
         boardNav.innerHTML = navComponent(3);
-        app.stop();
+        this.stop();
     },
 
     resumeGame: function(){
+        boardNav.innerHTML = '';
+        overlay.classList.remove('--active');
+        this.unsave('running');
+        this.start();
+    },
+
+    unsave: function(status){
         tetrisStorage.removeAll();
-        tetrisStorage.set('pausegame', false);
-        app.start();
+        tetrisStorage.set('status', status);
     },
 
     loop: function(){
@@ -212,7 +233,7 @@ const app = {
 
     start: function(){
         this.loop();
-        this.run(GAME_SPEED_DEFAULT);
+        this.run(this.gameSpeed);
     },
 
     stop: function(){
@@ -221,7 +242,7 @@ const app = {
     },
 }
 
-if (tetrisStorage.get('pausegame')) {
+if (tetrisStorage.get('status') === 'pause') {
     const currentLine = tetrisStorage.get('line');
     const currentScore = tetrisStorage.get('score');
     const currentBoard = tetrisStorage.get('board');
@@ -232,7 +253,7 @@ if (tetrisStorage.get('pausegame')) {
     app.init2(currentLine, currentScore, currentBoard);
 }else{
     tetrisStorage.removeAll();
-    tetrisStorage.set('pausegame', false);
+    tetrisStorage.set('status', 'end');
     app.init();
 }
 
