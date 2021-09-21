@@ -23,7 +23,7 @@ const gameoverAudio = document.querySelector('.gameover-audio');
 const _ = null;
 const ROW = 24;
 const COL = 10;
-const DOT_SIZE = Math.round(window.innerHeight / ROW);
+const DOT_SIZE = Math.round(800 / ROW);
 const GAME_HEIGHT = DOT_SIZE * ROW;
 const GAME_WIDTH = DOT_SIZE * COL;
 
@@ -44,12 +44,13 @@ const Color = [
 canvas.width = GAME_WIDTH;
 canvas.height = GAME_HEIGHT;
 
-ctx.fillStyle = GAME_BGCOLOR;
-ctx.fillRect(0, 0, canvas.width, canvas.height);
+const background = new Image();
+background.src = './asset/img/bg.png';
 
 document.addEventListener('DOMContentLoaded', function() {
     boardWrapper.style.bottom = DOT_SIZE * (ROW - 20) + 'px';
     main.style.position = 'relative';
-    main.style.top = DOT_SIZE * (ROW - 20) / 2 + 'px';
+    main.style.top = DOT_SIZE + 'px';
     gameInfo.style.width = Math.round(GAME_WIDTH * 0.66) + 'px';
+
 })

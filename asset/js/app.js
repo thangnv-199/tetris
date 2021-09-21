@@ -13,9 +13,8 @@ const app = {
         this.createBrick();
         this.listenerEvents();
     },
-    init2: function(line, score, board) {
-        const currentBrick = tetrisStorage.get('currentBrick');
-        const nextBrick = tetrisStorage.get('nextBrick');
+    init2: function(line, score, board, currentBrick, nextBrick) {
+        
         this.gameSpeed = tetrisStorage.get('speed') || GAME_SPEED_DEFAULT;
         this.totalLineRemove = line;
         this.currentLineRemove = 0;
@@ -77,6 +76,11 @@ const app = {
                     }
                     break;
             }
+        })
+
+        background.addEventListener('load', function() {
+            ctx.drawImage(background, 0, 0, canvas.width, canvas.height);
+            
         })
     },
 
@@ -153,17 +157,6 @@ const app = {
         this.nextBrick = new Brick(this, Color[this.random()], this.random());
     },
 
-    clear: function() {
-        ctx.fillStyle = GAME_BGCOLOR;
-        ctx.fillRect(0, 0, GAME_WIDTH, GAME_HEIGHT)
-    },
-
-    draw: function(){
-        this.clear();
-        this.board.draw();
-        this.brick.draw();
-    },
-
     newGame: function(){
         boardNav.innerHTML = '';
         score.innerHTML = 0;
@@ -178,7 +171,7 @@ const app = {
     endGame: function(){
         overlay.classList.add('--active');
         boardNav.innerHTML = navComponent(2);
-        gameoverAudio.play();
+        // gameoverAudio.play();
         this.unsave('end');
         this.stop();
     },
@@ -218,6 +211,16 @@ const app = {
         tetrisStorage.removeAll();
         tetrisStorage.set('status', status);
     },
+    
+    clear: function() {
+        ctx.drawImage(background, 0, 0, canvas.width, canvas.height);
+    },
+
+    draw: function(){
+        this.clear();
+        this.board.draw();
+        this.brick.draw();
+    },
 
     loop: function(){
         this.draw();
@@ -243,6 +246,8 @@ const app = {
 }
 
 if (tetrisStorage.get('status') === 'pause') {
+    const currentBrick = tetrisStorage.get('currentBrick');
+    const nextBrick = tetrisStorage.get('nextBrick');
     const currentLine = tetrisStorage.get('line');
     const currentScore = tetrisStorage.get('score');
     const currentBoard = tetrisStorage.get('board');
@@ -250,7 +255,7 @@ if (tetrisStorage.get('status') === 'pause') {
     lineScore.innerHTML = currentLine;
     overlay.classList.add('--active');
     boardNav.innerHTML = navComponent(3);
-    app.init2(currentLine, currentScore, currentBoard);
+    app.init2(currentLine, currentScore, currentBoard, currentBrick, nextBrick);
 }else{
     tetrisStorage.removeAll();
     tetrisStorage.set('status', 'end');

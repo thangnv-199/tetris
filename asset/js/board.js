@@ -2,10 +2,10 @@ class Board {
     constructor(app, data) {
         this.app = app;
         this.dots = [];
-        this.data = data || this.baseData();
+        this.data = data || this.createBaseData();
     }
 
-    baseData() {
+    createBaseData() {
         let baseData = [];
         for (let row = 0; row < ROW; row++){
             let temp = [];
