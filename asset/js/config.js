@@ -13,6 +13,7 @@ const boardWrapper = document.querySelector('.board-wrapper');
 const boardNav = document.querySelector('.board-nav');
 const lineScore = document.querySelector('.line-score');
 const score = document.querySelector('.score');
+const highscore = document.querySelector('.highscore');
 const overlay = document.querySelector('.overlay');
 const gameInfo = document.querySelector('.game-info');
 const fallAudio = document.querySelector('.fall-audio');

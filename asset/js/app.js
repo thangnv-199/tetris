@@ -6,12 +6,15 @@ const app = {
         this.totalLineRemove = 0;
         this.currentLineRemove = 0;
         this.score = 0;
+        this.highscore = JSON.parse(localStorage.getItem('tetrisHighscore')) || 0;
         this.board = new Board(this);
         this.currentBrick = new Brick(this, Color[this.random()], this.random());
         this.nextBrick = new Brick(this, Color[this.random()], this.random());
         
         this.createBrick();
         this.listenerEvents();
+
+        highscore.innerHTML = this.highscore;
     },
     init2: function(line, score, board, currentBrick, nextBrick) {
         
@@ -19,6 +22,7 @@ const app = {
         this.totalLineRemove = line;
         this.currentLineRemove = 0;
         this.score = score;
+        this.highscore = JSON.parse(localStorage.getItem('tetrisHighscore')) || 0;
         this.board = new Board(this, board);
         this.board.draw();
         this.currentBrick = new Brick(this, currentBrick.color, this.random(), currentBrick);
@@ -27,6 +31,8 @@ const app = {
         this.currentBrick.draw();
         this.createBrick();
         this.listenerEvents();
+
+        highscore.innerHTML = this.highscore;
     },
 
     listenerEvents: function() {
@@ -91,6 +97,13 @@ const app = {
     setScore() {
         this.score = this.score + Math.pow(2, this.currentLineRemove) * 1000;
         score.innerHTML = this.score;
+    },
+
+    setHighscore: function() {
+        if (this.score <= this.highscore) return;
+        this.highscore = this.score;
+        localStorage.setItem('tetrisHighscore', JSON.stringify(this.highscore));
+        highscore.innerHTML = this.highscore;
     },
 
     setCountLine: function(){
@@ -158,6 +171,8 @@ const app = {
     },
 
     newGame: function(){
+        this.score = 0;
+        this.totalLineRemove = 0;
         boardNav.innerHTML = '';
         score.innerHTML = 0;
         lineScore.innerHTML = 0;
@@ -172,6 +187,7 @@ const app = {
         overlay.classList.add('--active');
         boardNav.innerHTML = navComponent(2);
         // gameoverAudio.play();
+        this.setHighscore();
         this.unsave('end');
         this.stop();
     },
@@ -231,7 +247,6 @@ const app = {
         this.running = setInterval(() => {
             this.brick.fall();
         }, GAME_SPEED)
-
     },
 
     start: function(){
@@ -256,6 +271,7 @@ if (tetrisStorage.get('status') === 'pause') {
     overlay.classList.add('--active');
     boardNav.innerHTML = navComponent(3);
     app.init2(currentLine, currentScore, currentBoard, currentBrick, nextBrick);
+    
 }else{
     tetrisStorage.removeAll();
     tetrisStorage.set('status', 'end');
